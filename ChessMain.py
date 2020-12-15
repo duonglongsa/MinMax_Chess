@@ -1,6 +1,6 @@
 import pygame as p
-import ChessEngine
 import os
+from MinMax_Chess import ChessEngine
 
 WIDTH = HEIGHT = 512
 DEMENSION = 8   #8X8
@@ -56,6 +56,8 @@ def main():
                         playerClicks = []
                     else:
                         playerClicks = [sqSelected]
+
+
             #key handler
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
@@ -68,6 +70,9 @@ def main():
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)
         p.display.flip()
+        totalPoint = ChessEngine.chessEvaluation().evaluateBoard(gs.board)
+        print("total point: ", totalPoint)
+
 
 def drawGameState(screen, gs):
     drawBoard(screen)   #draw square on board
