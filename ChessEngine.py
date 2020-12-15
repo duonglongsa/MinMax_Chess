@@ -10,8 +10,6 @@ class GameState():
             ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
 
-
-
         self.moveFunctions = {'p': self.getPawnMoves, 'R': self.getRookMoves, 'N': self.getKnightMoves,
                               'B': self.getBishopMoves, 'Q': self.getQueenMoves, 'K': self.getKingMoves}
         self.whiteToMove = True
@@ -89,8 +87,8 @@ class GameState():
             for c in range(len(self.board[r])):
                 turn = self.board[r][c][0]
                 if(turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
-                    peice = self.board[r][c][1]
-                    self.moveFunctions[peice](r, c, moves)
+                    piece = self.board[r][c][1]
+                    self.moveFunctions[piece](r, c, moves)
         return moves
 
     def getPawnMoves(self, r, c, moves):
@@ -126,10 +124,10 @@ class GameState():
                 endRow = r + d[0] * i
                 endCol = c + d[1] * i
                 if 0 <= endRow < 8 and 0 <= endCol < 8:
-                    endPeice = self.board[endRow][endCol]
-                    if endPeice == '--':
+                    endpiece = self.board[endRow][endCol]
+                    if endpiece == '--':
                         moves.append(Move((r, c), (endRow, endCol), self.board))
-                    elif endPeice[0] == enemyColor:
+                    elif endpiece[0] == enemyColor:
                         moves.append(Move((r, c), (endRow, endCol), self.board))
                         break
                     else:
@@ -155,10 +153,10 @@ class GameState():
                 endRow = r + d[0] * i
                 endCol = c + d[1] * i
                 if 0 <= endRow < 8 and 0 <= endCol < 8:
-                    endPeice = self.board[endRow][endCol]
-                    if endPeice == '--':
+                    endpiece = self.board[endRow][endCol]
+                    if endpiece == '--':
                         moves.append(Move((r, c), (endRow, endCol), self.board))
-                    elif endPeice[0] == enemyColor:
+                    elif endpiece[0] == enemyColor:
                         moves.append(Move((r, c), (endRow, endCol), self.board))
                         break
                     else:
@@ -209,3 +207,131 @@ class Move():
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
 
+class MinMaxPruning:
+
+    def __init__(self):
+        #Piece value
+        self.whitePawnEval = [
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+            [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
+            [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5],
+            [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0],
+            [0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5],
+            [0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        ]
+
+        self.blackPawnEval = list(reversed(self.whitePawnEval))
+
+
+        self.whiteKnightEval = [
+            [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
+            [-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0],
+            [-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0],
+            [-3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0],
+            [-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0],
+            [-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0],
+            [-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0],
+            [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
+        ]
+        self.blackKnightEval = list(reversed(self.whiteKnightEval))
+
+
+        self.whiteBishopEval = [
+            [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
+            [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
+            [-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0],
+            [-1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0],
+            [-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0],
+            [-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0],
+            [-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0],
+            [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
+        ]
+        self.blackBishopEval = list(reversed(self.whiteBishopEval))
+
+        self.whiteRookEval = [
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5],
+            [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
+            [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
+            [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
+            [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
+            [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
+            [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0]
+        ]
+        self.blackRookEval = list(reversed(self.whiteRookEval))
+
+
+
+        self.whiteQueenEval = [
+            [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
+            [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
+            [-1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0],
+            [-0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5],
+            [0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5],
+            [-1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0],
+            [-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0],
+            [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
+        ]
+        self.blackQueenEval = list(reversed(self.whiteQueenEval))
+
+
+        self.whiteKingEval = [
+            [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+            [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+            [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+            [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
+            [-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0],
+            [-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0],
+            [2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0],
+            [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0]
+        ]
+        self.blackKingEval = list(reversed(self.whiteKingEval))
+
+    def evaluateBoard(self, board):
+        totalEval = 0
+        for row in range(8):
+            for col in range(8):
+                totalEval += self.getPieceValue(board[row][col], row, col)
+        return totalEval
+
+    def getPieceValue(self, piece, r, c):
+        if(piece == None):
+            return 0
+        absoluteValue = 0
+        if piece[1] == 'p':
+            if piece[0] == "w":
+                absoluteValue = 10 + self.whitePawnEval[r][c]
+            else:
+                absoluteValue = 10 + self.blackPawnEval[r][c]
+        elif piece[1] == 'N':
+            if(piece[0] == "w"):
+                absoluteValue = 30 + self.whiteKnightEval[r][c]
+            else:
+                absoluteValue = 30 + self.blackKnightEval[r][c]
+        elif piece[1] == 'B':
+            if (piece[0] == "w"):
+                absoluteValue = 30 + self.whiteBishopEval[r][c]
+            else:
+                absoluteValue = 30 + self.blackBishopEval[r][c]
+        elif piece[1] == 'R':
+            if (piece[0] == "w"):
+                absoluteValue = 50 + self.whiteRookEval[r][c]
+            else:
+                absoluteValue = 50 + self.blackRookEval[r][c]
+        elif piece[1] == 'Q':
+            if (piece[0] == "w"):
+                absoluteValue = 90 + self.whiteQueenEval[r][c]
+            else:
+                absoluteValue = 90 + self.blackQueenEval[r][c]
+        elif piece[1] == 'K':
+            if (piece[0] == "w"):
+                absoluteValue = 900 + self.whiteKingEval[r][c]
+            else:
+                absoluteValue = 900 + self.blackKingEval[r][c]
+
+        if piece[0] == 'w':
+            return absoluteValue
+        else:
+            return -absoluteValue

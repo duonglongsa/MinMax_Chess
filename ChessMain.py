@@ -56,6 +56,8 @@ def main():
                         playerClicks = []
                     else:
                         playerClicks = [sqSelected]
+                totalpoint = ChessEngine.MinMaxPruning().evaluateBoard(gs.board)
+                print("total point: ", totalpoint)
             #key handler
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
@@ -65,6 +67,7 @@ def main():
         if moveMade:
             validMoves = gs.getValidMoves()
             moveMade = False
+
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)
         p.display.flip()
