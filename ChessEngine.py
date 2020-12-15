@@ -17,22 +17,22 @@ class GameState():
         self.whiteKingLocation = (7, 4)
         self.blackKingLocation = (0, 4)
         self.checkMate = False
-        self.staleMate = False #end game
+        self.staleMate = False  # end game
 
     def makeMove(self, move):
         self.board[move.startRow][move.startCol] = "--"
         self.board[move.endRow][move.endCol] = move.pieceMove
-        self.moveLog.append(move) #log the move to undo
-        self.whiteToMove = not self.whiteToMove #swap player
-        #upadate king location
+        self.moveLog.append(move)  # log the move to undo
+        self.whiteToMove = not self.whiteToMove  # swap player
+        # upadate king location
         if move.pieceMove == "wK":
             self.whiteKingLocation = (move.endRow, move.endCol)
         if move.pieceMove == "bK":
             self.blackKingLocation = (move.endRow, move.endCol)
 
-    #undo last move
+    # undo last move
     def undoMove(self):
-        if  len(self.moveLog) != 0:
+        if len(self.moveLog) != 0:
             move = self.moveLog.pop()
             self.board[move.startRow][move.startCol] = move.pieceMove
             self.board[move.endRow][move.endCol] = move.pieceCaptured
@@ -43,10 +43,10 @@ class GameState():
             if move.pieceMove == "bK":
                 self.blackKingLocation = (move.startRow, move.startCol)
 
-    #considering checkmate moves[] = move((1,2),(2,3))
+    # considering checkmate moves[] = move((1,2),(2,3))
     def getValidMoves(self):
-        moves =  self.getAllPossibleMoves()
-        for i in range(len(moves)-1, -1, -1): #loop backwards
+        moves = self.getAllPossibleMoves()
+        for i in range(len(moves) - 1, -1, -1):  # loop backwards
             self.makeMove(moves[i])
             self.whiteToMove = not self.whiteToMove
             if self.inCheck():
@@ -64,7 +64,7 @@ class GameState():
 
         return moves
 
-    #Determine if in check
+    # Determine if in check
     def inCheck(self):
         if self.whiteToMove:
             return self.squareUnderAttack(self.whiteKingLocation[0], self.whiteKingLocation[1])
@@ -72,49 +72,55 @@ class GameState():
             return self.squareUnderAttack(self.blackKingLocation[0], self.blackKingLocation[1])
 
     def squareUnderAttack(self, r, c):
-        self.whiteToMove = not self.whiteToMove #switch opponent's turn
+        self.whiteToMove = not self.whiteToMove  # switch opponent's turn
         oppMoves = self.getAllPossibleMoves()
         self.whiteToMove = not self.whiteToMove  # switch turn back
         for move in oppMoves:
-            if move.endRow == r and move.endCol == c: #square under attack
+            if move.endRow == r and move.endCol == c:  # square under attack
                 return True
         return False
 
-        #not considering checkmate
+        # not considering checkmate
+
     def getAllPossibleMoves(self):
         moves = []
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
                 turn = self.board[r][c][0]
+<<<<<<< HEAD
                 if(turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     piece = self.board[r][c][1]
                     self.moveFunctions[piece](r, c, moves)
+=======
+                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
+                    peice = self.board[r][c][1]
+                    self.moveFunctions[peice](r, c, moves)
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
         return moves
 
     def getPawnMoves(self, r, c, moves):
         if self.whiteToMove:
-            if self.board[r-1][c] == "--":
-                moves.append(Move((r, c), (r-1, c), self.board))
-                if r == 6 and self.board[r-2][c] == '--':
-                    moves.append(Move((r, c), (r-2, c), self.board))
-            if c-1 >= 0:
-                if self.board[r-1][c-1][0] == 'b':
-                    moves.append(Move((r, c), (r-1, c-1), self.board))
-            if c+1 <= 7:
+            if self.board[r - 1][c] == "--":
+                moves.append(Move((r, c), (r - 1, c), self.board))
+                if r == 6 and self.board[r - 2][c] == '--':
+                    moves.append(Move((r, c), (r - 2, c), self.board))
+            if c - 1 >= 0:
                 if self.board[r - 1][c - 1][0] == 'b':
-                    moves.append(Move((r, c), (r-1, c+1), self.board))
+                    moves.append(Move((r, c), (r - 1, c - 1), self.board))
+            if c + 1 <= 7:
+                if self.board[r - 1][c - 1][0] == 'b':
+                    moves.append(Move((r, c), (r - 1, c + 1), self.board))
         if not self.whiteToMove:
-            if self.board[r+1][c] == "--":
-                moves.append(Move((r, c), (r+1, c), self.board))
-                if r == 1 and self.board[r+2][c] == '--':
-                    moves.append(Move((r, c), (r+2, c), self.board))
-            if c-1 >= 0:
-                if self.board[r+1][c-1][0] == 'w':
-                    moves.append(Move((r, c), (r+1, c-1), self.board))
-            if c+1 <= 7:
-                if self.board[r+1][c+1][0] == 'w':
-                    moves.append(Move((r, c), (r+1, c+1), self.board))
-
+            if self.board[r + 1][c] == "--":
+                moves.append(Move((r, c), (r + 1, c), self.board))
+                if r == 1 and self.board[r + 2][c] == '--':
+                    moves.append(Move((r, c), (r + 2, c), self.board))
+            if c - 1 >= 0:
+                if self.board[r + 1][c - 1][0] == 'w':
+                    moves.append(Move((r, c), (r + 1, c - 1), self.board))
+            if c + 1 <= 7:
+                if self.board[r + 1][c + 1][0] == 'w':
+                    moves.append(Move((r, c), (r + 1, c + 1), self.board))
 
     def getRookMoves(self, r, c, moves):
         direction = ((-1, 0), (0, -1), (1, 0), (0, 1))
@@ -141,10 +147,11 @@ class GameState():
         for m in knightMoves:
             endRow = r + m[0]
             endCol = c + m[1]
-            if 0 <= endRow < 8 and 0<= endCol < 8:
+            if 0 <= endRow < 8 and 0 <= endCol < 8:
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] != allyColor:
                     moves.append(Move((r, c), (endRow, endCol), self.board))
+
     def getBishopMoves(self, r, c, moves):
         directions = ((-1, -1), (-1, 1), (1, -1), (1, 1))
         enemyColor = 'b' if self.whiteToMove else 'w'
@@ -179,9 +186,10 @@ class GameState():
                 if endPiece[0] != allyColor:
                     moves.append(Move((r, c), (endRow, endCol), self.board))
 
+
 class Move():
     ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4,
-                  "5": 3, "6": 2, "7": 1, "8": 0}
+                   "5": 3, "6": 2, "7": 1, "8": 0}
     rowsToRanks = {v: k for k, v in ranksToRows.items()}
     filesToCols = {"a": 0, "b": 1, "c": 2, "d": 3,
                    "e": 4, "f": 5, "g": 6, "h": 7}
@@ -195,7 +203,8 @@ class Move():
         self.pieceMove = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
-    #override equal method
+
+    # override equal method
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.moveID == other.moveID
@@ -207,11 +216,18 @@ class Move():
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
 
+<<<<<<< HEAD
 class MinMaxPruning:
 
     def __init__(self):
         #Piece value
         self.whitePawnEval = [
+=======
+
+class chessEvaluation():
+    def __init__(self):
+        self.pawnEvalWhite = [
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
             [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
@@ -222,10 +238,16 @@ class MinMaxPruning:
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         ]
 
+<<<<<<< HEAD
         self.blackPawnEval = list(reversed(self.whitePawnEval))
 
 
         self.whiteKnightEval = [
+=======
+        self.pawnEvalBlack = list(reversed(self.pawnEvalWhite))
+
+        self.knightEval = [
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
             [-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0],
             [-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0],
@@ -235,10 +257,15 @@ class MinMaxPruning:
             [-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0],
             [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
         ]
+<<<<<<< HEAD
         self.blackKnightEval = list(reversed(self.whiteKnightEval))
 
 
         self.whiteBishopEval = [
+=======
+
+        self.bishopEvalWhite = [
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
             [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
             [-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0],
@@ -248,9 +275,16 @@ class MinMaxPruning:
             [-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0],
             [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
         ]
+<<<<<<< HEAD
         self.blackBishopEval = list(reversed(self.whiteBishopEval))
 
         self.whiteRookEval = [
+=======
+
+        self.bishopEvalBlack = list(reversed(self.bishopEvalWhite))
+
+        self.rookEvalWhite = [
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5],
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
@@ -260,11 +294,17 @@ class MinMaxPruning:
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
             [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0]
         ]
+<<<<<<< HEAD
         self.blackRookEval = list(reversed(self.whiteRookEval))
 
 
 
         self.whiteQueenEval = [
+=======
+        self.rookEvalBlack = list(reversed(self.rookEvalWhite))
+
+        self.queenEval = [
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
             [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
             [-1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0],
@@ -274,10 +314,15 @@ class MinMaxPruning:
             [-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0],
             [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
         ]
+<<<<<<< HEAD
         self.blackQueenEval = list(reversed(self.whiteQueenEval))
 
 
         self.whiteKingEval = [
+=======
+
+        self.kingEvalWhite = [
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
@@ -287,6 +332,7 @@ class MinMaxPruning:
             [2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0],
             [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0]
         ]
+<<<<<<< HEAD
         self.blackKingEval = list(reversed(self.whiteKingEval))
 
     def evaluateBoard(self, board):
@@ -332,6 +378,47 @@ class MinMaxPruning:
                 absoluteValue = 900 + self.blackKingEval[r][c]
 
         if piece[0] == 'w':
+=======
+        self.kingEvalBlack = list(reversed(self.kingEvalWhite))
+
+    def evaluateBoard(self, board):
+        totalEvaluation = 0
+        for row in range(8):
+            for col in range(8):
+                totalEvaluation += self.getPieceValue(board[row][col], row, col)
+        return totalEvaluation
+
+    def getPieceValue(self, piece, row, col):
+        if (piece == None):
+            return 0
+        absoluteValue = 0
+        if (piece[1] == 'p'):
+            if (piece[0] == 'w'):
+                absoluteValue = 10 + self.pawnEvalWhite[row][col]
+            else:
+                absoluteValue = 10 + self.pawnEvalBlack[row][col]
+        elif (piece[1] == 'N'):
+            absoluteValue = 30 + self.knightEval[row][col]
+        elif (piece[1] == 'B'):
+            if (piece[0] == 'w'):
+                absoluteValue = 30 + self.bishopEvalWhite[row][col]
+            else:
+                absoluteValue = 30 + self.bishopEvalBlack[row][col]
+        elif (piece[1] == 'R'):
+            if (piece[0] == 'w'):
+                absoluteValue = 50 + self.rookEvalWhite[row][col]
+            else:
+                absoluteValue = 50 + self.rookEvalBlack[row][col]
+        elif (piece[1] == 'Q'):
+            absoluteValue = 90 + self.pawnEvalWhite[row][col]
+        elif (piece[1] == 'K'):
+            if (piece[0] == 'w'):
+                absoluteValue = 900 + self.kingEvalWhite[row][col]
+            else:
+                absoluteValue = 900 + self.kingEvalBlack[row][col]
+
+        if (piece[0] == 'w'):
+>>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             return absoluteValue
         else:
             return -absoluteValue
