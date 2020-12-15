@@ -87,15 +87,10 @@ class GameState():
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
                 turn = self.board[r][c][0]
-<<<<<<< HEAD
-                if(turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
-                    piece = self.board[r][c][1]
-                    self.moveFunctions[piece](r, c, moves)
-=======
                 if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     peice = self.board[r][c][1]
                     self.moveFunctions[peice](r, c, moves)
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
+
         return moves
 
     def getPawnMoves(self, r, c, moves):
@@ -108,7 +103,7 @@ class GameState():
                 if self.board[r - 1][c - 1][0] == 'b':
                     moves.append(Move((r, c), (r - 1, c - 1), self.board))
             if c + 1 <= 7:
-                if self.board[r - 1][c - 1][0] == 'b':
+                if self.board[r - 1][c + 1][0] == 'b':
                     moves.append(Move((r, c), (r - 1, c + 1), self.board))
         if not self.whiteToMove:
             if self.board[r + 1][c] == "--":
@@ -216,18 +211,9 @@ class Move():
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
 
-<<<<<<< HEAD
-class MinMaxPruning:
-
+class MinMaxPruning():
     def __init__(self):
-        #Piece value
         self.whitePawnEval = [
-=======
-
-class chessEvaluation():
-    def __init__(self):
-        self.pawnEvalWhite = [
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
             [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
@@ -237,17 +223,10 @@ class chessEvaluation():
             [0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5],
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         ]
-
-<<<<<<< HEAD
         self.blackPawnEval = list(reversed(self.whitePawnEval))
 
 
         self.whiteKnightEval = [
-=======
-        self.pawnEvalBlack = list(reversed(self.pawnEvalWhite))
-
-        self.knightEval = [
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
             [-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0],
             [-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0],
@@ -257,15 +236,10 @@ class chessEvaluation():
             [-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0],
             [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
         ]
-<<<<<<< HEAD
         self.blackKnightEval = list(reversed(self.whiteKnightEval))
 
 
         self.whiteBishopEval = [
-=======
-
-        self.bishopEvalWhite = [
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
             [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
             [-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0],
@@ -275,16 +249,9 @@ class chessEvaluation():
             [-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0],
             [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
         ]
-<<<<<<< HEAD
         self.blackBishopEval = list(reversed(self.whiteBishopEval))
 
         self.whiteRookEval = [
-=======
-
-        self.bishopEvalBlack = list(reversed(self.bishopEvalWhite))
-
-        self.rookEvalWhite = [
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5],
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
@@ -294,17 +261,11 @@ class chessEvaluation():
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
             [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0]
         ]
-<<<<<<< HEAD
         self.blackRookEval = list(reversed(self.whiteRookEval))
 
 
 
         self.whiteQueenEval = [
-=======
-        self.rookEvalBlack = list(reversed(self.rookEvalWhite))
-
-        self.queenEval = [
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
             [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
             [-1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0],
@@ -314,15 +275,10 @@ class chessEvaluation():
             [-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0],
             [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
         ]
-<<<<<<< HEAD
         self.blackQueenEval = list(reversed(self.whiteQueenEval))
 
 
         self.whiteKingEval = [
-=======
-
-        self.kingEvalWhite = [
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
@@ -332,7 +288,6 @@ class chessEvaluation():
             [2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0],
             [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0]
         ]
-<<<<<<< HEAD
         self.blackKingEval = list(reversed(self.whiteKingEval))
 
     def evaluateBoard(self, board):
@@ -377,9 +332,10 @@ class chessEvaluation():
             else:
                 absoluteValue = 900 + self.blackKingEval[r][c]
 
-        if piece[0] == 'w':
-=======
-        self.kingEvalBlack = list(reversed(self.kingEvalWhite))
+        if (piece[0] == 'w'):
+            return absoluteValue
+        else:
+            return -absoluteValue
 
     def evaluateBoard(self, board):
         totalEvaluation = 0
@@ -388,37 +344,4 @@ class chessEvaluation():
                 totalEvaluation += self.getPieceValue(board[row][col], row, col)
         return totalEvaluation
 
-    def getPieceValue(self, piece, row, col):
-        if (piece == None):
-            return 0
-        absoluteValue = 0
-        if (piece[1] == 'p'):
-            if (piece[0] == 'w'):
-                absoluteValue = 10 + self.pawnEvalWhite[row][col]
-            else:
-                absoluteValue = 10 + self.pawnEvalBlack[row][col]
-        elif (piece[1] == 'N'):
-            absoluteValue = 30 + self.knightEval[row][col]
-        elif (piece[1] == 'B'):
-            if (piece[0] == 'w'):
-                absoluteValue = 30 + self.bishopEvalWhite[row][col]
-            else:
-                absoluteValue = 30 + self.bishopEvalBlack[row][col]
-        elif (piece[1] == 'R'):
-            if (piece[0] == 'w'):
-                absoluteValue = 50 + self.rookEvalWhite[row][col]
-            else:
-                absoluteValue = 50 + self.rookEvalBlack[row][col]
-        elif (piece[1] == 'Q'):
-            absoluteValue = 90 + self.pawnEvalWhite[row][col]
-        elif (piece[1] == 'K'):
-            if (piece[0] == 'w'):
-                absoluteValue = 900 + self.kingEvalWhite[row][col]
-            else:
-                absoluteValue = 900 + self.kingEvalBlack[row][col]
 
-        if (piece[0] == 'w'):
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
-            return absoluteValue
-        else:
-            return -absoluteValue

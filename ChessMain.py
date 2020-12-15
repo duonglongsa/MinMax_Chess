@@ -1,6 +1,6 @@
 import pygame as p
 import os
-from MinMax_Chess import ChessEngine
+import ChessEngine
 
 WIDTH = HEIGHT = 512
 DEMENSION = 8   #8X8
@@ -56,13 +56,9 @@ def main():
                         playerClicks = []
                     else:
                         playerClicks = [sqSelected]
-<<<<<<< HEAD
                 totalpoint = ChessEngine.MinMaxPruning().evaluateBoard(gs.board)
                 print("total point: ", totalpoint)
-=======
 
-
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
             #key handler
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
@@ -72,12 +68,10 @@ def main():
         if moveMade:
             validMoves = gs.getValidMoves()
             moveMade = False
-<<<<<<< HEAD
 
-        drawGameState(screen, gs)
-=======
+        #drawGameState(screen, gs)
         drawGameState(screen, gs, validMoves, sqSelected)
->>>>>>> 88f3fc01662caa5317f64fb7ecaedf478629021e
+
         clock.tick(MAX_FPS)
         p.display.flip()
         #totalPoint = ChessEngine.chessEvaluation().evaluateBoard(gs.board)
@@ -90,7 +84,6 @@ def highlightSquare(screen ,gs , validMoves, sqSelected):
 
     if sqSelected != ():
         row, col = sqSelected
-
         if gs.board[row][col][0] == ('w' if gs.whiteToMove else 'b'): # consider the color
             print("where is my color")
             #highlight selected square
