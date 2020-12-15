@@ -67,16 +67,42 @@ def main():
         if moveMade:
             validMoves = gs.getValidMoves()
             moveMade = False
-        drawGameState(screen, gs)
+        drawGameState(screen, gs, validMoves, sqSelected)
         clock.tick(MAX_FPS)
         p.display.flip()
-        totalPoint = ChessEngine.chessEvaluation().evaluateBoard(gs.board)
-        print("total point: ", totalPoint)
+        #totalPoint = ChessEngine.chessEvaluation().evaluateBoard(gs.board)
+        #print("total point: ", totalPoint)
+
+'''
+highlight selected position and move animation
+'''
+def highlightSquare(screen ,gs , validMoves, sqSelected):
+
+    if sqSelected != ():
+        row, col = sqSelected
+
+        if gs.board[row][col][0] == ('w' if gs.whiteToMove else 'b'): # consider the color
+            print("where is my color")
+            #highlight selected square
+            surface = p.Surface((SQ_SIZE,SQ_SIZE))
+            surface.set_alpha(100) #transperancy value
+            surface.fill(p.Color("blue"))
+            screen.blit(surface, (col*SQ_SIZE, row*SQ_SIZE))
+            #highlight posible moves
+            surface.fill(p.Color("yellow"))
+            for move in validMoves:
+                if move.startRow == row and move.startCol == col:
+                    screen.blit(surface, (move.endCol*SQ_SIZE,move.endRow*SQ_SIZE))
 
 
-def drawGameState(screen, gs):
+
+
+def drawGameState(screen, gs, validMoves, sqSelected):
     drawBoard(screen)   #draw square on board
+
     drawPieces(screen, gs.board)    #draw pieces
+    highlightSquare(screen, gs, validMoves, sqSelected)
+
 
 '''
 draw square on board
