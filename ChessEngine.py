@@ -385,7 +385,6 @@ class MinMaxPruning():
             bestMove = 9999
             for move in possibleMoves:
                 gs.makeMove(move)
-                gs.whiteToMove = not gs.whiteToMove  # switch turn
                 temp =  self.minimax(depth - 1, gs, alpha, beta,True)
                 bestMove = min(bestMove, temp)
                 #gs.undoMove()
@@ -398,7 +397,6 @@ class MinMaxPruning():
     '''
     def makeBestMove(self):
         #game over
-
         #tinh toan best move va di chuyen
         bestMove = self.minmaxRoot()
     '''
