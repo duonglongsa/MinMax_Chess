@@ -70,6 +70,7 @@ def main():
             #print(minmaxPruning.minmaxRoot(2, gs))
             bestMove = minmaxPruning.minmaxRoot(3,gs)
             gs.makeMove(bestMove)
+            gs.whiteToMove = not gs.whiteToMove
             print("best move: ", bestMove.getChessNotation())
             moveMade = True
             sqSelected = ()  # reset player clicks

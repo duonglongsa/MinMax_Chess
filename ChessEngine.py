@@ -352,15 +352,16 @@ class MinMaxPruning():
             gs.makeMove(move)
             #gs.whiteToMove = not gs.whiteToMove #switch turn
             #value = max(bestMove, self.minimax(depth - 1, gs,-10000,10000,True))
-            value = self.minimax(depth -1,gs ,-9999, 9999, False)
+            value = self.minimax(depth -  1,gs ,-9999, 9999, False)
             gs.undoMove()
             if(value > bestMove):
                 bestMove = value
+                bestMoveFinal = ()
                 bestMoveFinal = move
-
+        print("k")
         return bestMoveFinal
 
-    def minimax(self, depth, gs, alpha, beta,maximizingPlayer):
+    def minimax(self, depth, gs, alpha, beta, maximizingPlayer):
         if (depth == 0):
             return -self.evaluateBoard(gs.board)
         possibleMoves = gs.getValidMoves()
@@ -370,7 +371,7 @@ class MinMaxPruning():
                 gs.makeMove(move)
                 #gs.whiteToMove = not gs.whiteToMove #switch turn
                 #goi de quy minimax voi cac nut con
-                temp =  self.minimax(depth -1,gs, alpha,beta,False)
+                temp =  self.minimax(depth - 1, gs, alpha, beta, False)
                 bestMove = max(bestMove, temp)
                 #gs.undoMove()
                 #tinh max cua alpha va max cua cac nut con
