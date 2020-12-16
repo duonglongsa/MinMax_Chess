@@ -1,5 +1,5 @@
 import pygame as p
-import os
+
 import ChessEngine
 
 WIDTH = HEIGHT = 512
@@ -22,6 +22,7 @@ def main():
 
     #Game state
     gs = ChessEngine.GameState()
+    minmaxPruning = ChessEngine.MinMaxPruning()
 
     validMoves = gs.getValidMoves()
     moveMade = False
@@ -32,50 +33,57 @@ def main():
     sqSelected = () #tuple (row, col)
     playerClicks = []
     while running:
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                running = False
-            #mouse handler
-            elif e.type == p.MOUSEBUTTONDOWN:
-                location = p.mouse.get_pos() #(x, y) location of mouse
-                col = location[0]//SQ_SIZE
-                row = location[1]//SQ_SIZE
-                if sqSelected == (row, col): #player clicked the same square
-                    sqSelected = ()         #deselect
-                    playerClicks = []       #clear player click
-                else:
-                    sqSelected = (row, col)
-                    playerClicks.append(sqSelected) #apend fot 1st and 2nd click
-                if len(playerClicks) == 2: #after player's 2nd click
-                    move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                    print(move.getChessNotation())
-                    if move in validMoves:
-                        gs.makeMove(move)
-                        moveMade = True
-                        sqSelected = () #reset player clicks
-                        playerClicks = []
+        if gs.whiteToMove:
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    running = False
+                #mouse handler
+                elif e.type == p.MOUSEBUTTONDOWN:
+                    location = p.mouse.get_pos() #(x, y) location of mouse
+                    col = location[0]//SQ_SIZE
+                    row = location[1]//SQ_SIZE
+                    if sqSelected == (row, col): #player clicked the same square
+                        sqSelected = ()         #deselect
+                        playerClicks = []       #clear player click
                     else:
-                        playerClicks = [sqSelected]
-                totalpoint = ChessEngine.MinMaxPruning().evaluateBoard(gs.board)
-                print("total point: ", totalpoint)
+                        sqSelected = (row, col)
+                        playerClicks.append(sqSelected) #apend fot 1st and 2nd click
+                    if len(playerClicks) == 2: #after player's 2nd click
+                        move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+                        print(move.getChessNotation())
+                        if move in validMoves:
+                            gs.makeMove(move)
+                            moveMade = True
+                            sqSelected = () #reset player clicks
+                            playerClicks = []
+                        else:
+                            playerClicks = [sqSelected]
+                #key handler
+                elif e.type == p.KEYDOWN:
+                    if e.key == p.K_z:
+                        gs.undoMove()
+                        moveMade = True
+            if moveMade:
+                validMoves = gs.getValidMoves()
+                moveMade = False
+        else:
+            #print(minmaxPruning.minmaxRoot(2, gs))
+            bestMove = minmaxPruning.minmaxRoot(3,gs)
+            gs.makeMove(bestMove)
+            print("best move: ", bestMove.getChessNotation())
+            moveMade = True
+            sqSelected = ()  # reset player clicks
+            playerClicks = []
+            gs.whiteToMove = not gs.whiteToMove
+            print("luot cua trang: ", gs.whiteToMove)
 
-            #key handler
-            elif e.type == p.KEYDOWN:
-                if e.key == p.K_z:
-                    gs.undoMove()
-                    moveMade = True
 
-        if moveMade:
-            validMoves = gs.getValidMoves()
-            moveMade = False
 
         #drawGameState(screen, gs)
         drawGameState(screen, gs, validMoves, sqSelected)
 
         clock.tick(MAX_FPS)
         p.display.flip()
-        #totalPoint = ChessEngine.chessEvaluation().evaluateBoard(gs.board)
-        #print("total point: ", totalPoint)
 
 '''
 highlight selected position and move animation
@@ -85,7 +93,6 @@ def highlightSquare(screen ,gs , validMoves, sqSelected):
     if sqSelected != ():
         row, col = sqSelected
         if gs.board[row][col][0] == ('w' if gs.whiteToMove else 'b'): # consider the color
-            print("where is my color")
             #highlight selected square
             surface = p.Surface((SQ_SIZE,SQ_SIZE))
             surface.set_alpha(100) #transperancy value

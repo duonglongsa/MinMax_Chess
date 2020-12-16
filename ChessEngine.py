@@ -344,4 +344,60 @@ class MinMaxPruning():
                 totalEvaluation += self.getPieceValue(board[row][col], row, col)
         return totalEvaluation
 
+    def minmaxRoot(self, depth, gs):
+        possibleMoves = gs.getValidMoves()
+        bestMove =  -9999
+        bestMoveFinal = None
+        for move in possibleMoves:
+            gs.makeMove(move)
+            #gs.whiteToMove = not gs.whiteToMove #switch turn
+            #value = max(bestMove, self.minimax(depth - 1, gs,-10000,10000,True))
+            value = self.minimax(depth -1,gs ,-9999, 9999, False)
+            gs.undoMove()
+            if(value > bestMove):
+                bestMove = value
+                bestMoveFinal = move
 
+        return bestMoveFinal
+
+    def minimax(self, depth, gs, alpha, beta,maximizingPlayer):
+        if (depth == 0):
+            return -self.evaluateBoard(gs.board)
+        possibleMoves = gs.getValidMoves()
+        if maximizingPlayer:
+            bestMove = -9999
+            for move in possibleMoves:
+                gs.makeMove(move)
+                #gs.whiteToMove = not gs.whiteToMove #switch turn
+                #goi de quy minimax voi cac nut con
+                temp =  self.minimax(depth -1,gs, alpha,beta,False)
+                bestMove = max(bestMove, temp)
+                #gs.undoMove()
+                #tinh max cua alpha va max cua cac nut con
+                alpha = max(alpha, temp)
+                if beta <= alpha:
+                    gs.undoMove()
+                    break
+                gs.undoMove()
+            return bestMove
+        else:
+            bestMove = 9999
+            for move in possibleMoves:
+                gs.makeMove(move)
+                gs.whiteToMove = not gs.whiteToMove  # switch turn
+                temp =  self.minimax(depth - 1, gs, alpha, beta,True)
+                bestMove = min(bestMove, temp)
+                #gs.undoMove()
+                beta = min(beta, temp)
+                if beta <= alpha:
+                    gs.undoMove()
+                    break
+                gs.undoMove()
+            return bestMove
+    '''
+    def makeBestMove(self):
+        #game over
+
+        #tinh toan best move va di chuyen
+        bestMove = self.minmaxRoot()
+    '''
